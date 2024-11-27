@@ -1,0 +1,33 @@
+﻿@model Project.MVC.Models.ViewModels.VehicleMakeViewModel
+@{
+}
+<h1>Edit Vehicle Make</h1>
+
+<div class="container py-5">
+<form method="post">
+    <input type="text" readonly asp-for="Id" />
+
+    <div class="form-group">
+        <label asp-for="Name" class="control-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Abrv" class="control-label"></label>
+        <input asp-for="Abrv" class="form-control" />
+        <span asp-validation-for="Abrv" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <button type="submit" class="btn btn-dark"  asp-action="Edit">Save</button>
+    </div>
+    <div class="mb-3">
+        <button type="submit" class="btn btn-outline-dark" asp-action="Delete">Delete</button>
+    </div>
+</form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

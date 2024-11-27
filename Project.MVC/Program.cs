@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Project.Service;
 using Project.Service.Data;
+using Project.Service.Repositories;
 
 namespace Project.MVC
 {
@@ -13,6 +15,9 @@ namespace Project.MVC
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<AppDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("AppDbConnectionString")));
+            builder.Services.AddScoped<IVehicleMakeRepository, VehicleMakeRepository>();
+            builder.Services.AddScoped<IVehicleService, VehicleService>();
+            builder.Services.AddAutoMapper(typeof(Program));
 
             var app = builder.Build();
 
