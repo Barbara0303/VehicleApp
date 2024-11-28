@@ -17,7 +17,7 @@ namespace Project.MVC.Controllers
             _mapper = mapper;
         }
         [HttpGet]
-        public async Task<IActionResult> Index(string? searchQuery, string? sortBy, string? sortDirection, int pageSize = 3, int pageNumber = 1)
+        public async Task<IActionResult> Index(string? searchQuery, string? sortBy, string? sortDirection, int pageSize = 5, int pageNumber = 1)
         {
             var totalRecords = await _vehicleService.CountAsync();
             var totalPages = Math.Ceiling((decimal)totalRecords / pageSize);

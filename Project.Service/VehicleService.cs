@@ -6,13 +6,15 @@ namespace Project.Service
     public class VehicleService: IVehicleService
     {
         private readonly IVehicleMakeRepository _makeRepository;
+        private readonly IVehicleModelRepository _modelRepository;
 
-        public VehicleService(IVehicleMakeRepository makeRepository)
+        public VehicleService(IVehicleMakeRepository makeRepository, IVehicleModelRepository modelRepository)
         {
             _makeRepository = makeRepository;
+            _modelRepository = modelRepository;
         }
 
-        public async Task<IEnumerable<VehicleMake>> GetAllMakesAsync(string? searchQuery, string? sortBy, string? sortDirection, int pageSize = 10, int pageNumber = 1)
+        public async Task<IEnumerable<VehicleMake>> GetAllMakesAsync(string? searchQuery, string? sortBy, string? sortDirection, int pageSize = 0, int pageNumber =0)
         {
             return await _makeRepository.GetAllAsync(searchQuery, sortBy, sortDirection, pageSize, pageNumber);
         }
@@ -39,6 +41,41 @@ namespace Project.Service
         public async Task<VehicleMake?> DeleteMakeAsync(int id)
         {
             return await _makeRepository.DeleteAsync(id);
+        }
+
+        public async Task<IEnumerable<VehicleModel>> GetAllVehicleModelsAsync(string? searchQuery, string? sortBy, string? sortDirection, string? makeFilter, int pageSize = 0, int pageNumber = 0)
+        {
+            return await _modelRepository.GetAllAsync(searchQuery, sortBy, sortDirection, makeFilter, pageSize, pageNumber);
+        }
+
+        public async Task<VehicleModel?> GetVehicleModelByIdAsync(int id)
+        {
+            return await _modelRepository.GetByIdAsync(id);
+        }
+
+        public async Task<VehicleModel> AddVehicleModelAsync(VehicleModel vehicleModel)
+        {
+            return await _modelRepository.AddAsync(vehicleModel);
+        }
+
+        public async Task<VehicleModel?> UpdateVehicleModelAsync(VehicleModel vehicleModel)
+        {
+            return await _modelRepository.UpdateAsync(vehicleModel);
+        }
+
+        public async Task<VehicleModel?> DeleteVehicleModelAsync(int id)
+        {
+            return await _modelRepository.DeleteAsync(id);
+        }
+
+        public async Task<int> GetVehicleModelCountAsync()
+        {
+            return await _modelRepository.CountAsync();
+        }
+
+        public async Task<IEnumerable<VehicleMake>> GetAllMakesForDropdownAsync()
+        {
+            return await _makeRepository.GetAllAsync();
         }
     }
 }

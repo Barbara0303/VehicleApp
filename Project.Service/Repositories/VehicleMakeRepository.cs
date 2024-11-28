@@ -36,7 +36,7 @@ namespace Project.Service.Repositories
         }
 
         public async Task<IEnumerable<VehicleMake>> GetAllAsync(string? searchQuery, string? sortBy, string? sortDirection,
-             int pageSize = 5, int pageNumber = 1)
+             int pageSize = 0, int pageNumber = 0)
         {
             var query = _appDbContext.VehicleMakes.AsQueryable();
 
@@ -61,8 +61,11 @@ namespace Project.Service.Repositories
 
             }
 
-            var skipResults = (pageNumber - 1) * pageSize;
-            query = query.Skip(skipResults).Take(pageSize);
+            if (pageSize > 0 && pageNumber > 0)
+            {
+                var skipResults = (pageNumber - 1) * pageSize;
+                query = query.Skip(skipResults).Take(pageSize);
+            }
 
             return await query.ToListAsync();
         }

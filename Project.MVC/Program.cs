@@ -16,6 +16,7 @@ namespace Project.MVC
             builder.Services.AddDbContext<AppDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("AppDbConnectionString")));
             builder.Services.AddScoped<IVehicleMakeRepository, VehicleMakeRepository>();
+            builder.Services.AddScoped<IVehicleModelRepository, VehicleModelRepository>();
             builder.Services.AddScoped<IVehicleService, VehicleService>();
             builder.Services.AddAutoMapper(typeof(Program));
 
