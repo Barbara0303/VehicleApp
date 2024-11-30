@@ -14,31 +14,31 @@ namespace Project.Service
             _modelRepository = modelRepository;
         }
 
-        public async Task<IEnumerable<VehicleMake>> GetAllMakesAsync(string? searchQuery, string? sortBy, string? sortDirection, int pageSize = 0, int pageNumber =0)
+        public async Task<IEnumerable<VehicleMake>> GetAllVehicleMakesAsync(string? searchQuery, string? sortBy, string? sortDirection, int pageSize = 0, int pageNumber =0)
         {
             return await _makeRepository.GetAllAsync(searchQuery, sortBy, sortDirection, pageSize, pageNumber);
         }
 
-        public async Task<int> CountAsync()
+        public async Task<int> CountVehicleMakeAsync()
         {
             return await _makeRepository.CountAsync();
         }
 
-        public async Task<VehicleMake?> GetMakeByIdAsync(int id)
+        public async Task<VehicleMake?> GetVehicleMakeByIdAsync(int id)
         {
             return await _makeRepository.GetByIdAsync(id);
         }
 
-        public async Task<VehicleMake> CreateMakeAsync(VehicleMake make)
+        public async Task<VehicleMake> CreateVehicleMakeAsync(VehicleMake make)
         {
             return await _makeRepository.AddAsync(make);
         }
-        public async Task<VehicleMake?> UpdateMakeAsync(VehicleMake make)
+        public async Task<VehicleMake?> UpdateVehicleMakeAsync(VehicleMake make)
         {
             return await _makeRepository.UpdateAsync(make);
         }
 
-        public async Task<VehicleMake?> DeleteMakeAsync(int id)
+        public async Task<VehicleMake?> DeleteVehicleMakeAsync(int id)
         {
             return await _makeRepository.DeleteAsync(id);
         }
@@ -73,7 +73,7 @@ namespace Project.Service
             return await _modelRepository.CountAsync();
         }
 
-        public async Task<IEnumerable<VehicleMake>> GetAllMakesForDropdownAsync()
+        public async Task<IEnumerable<VehicleMake>> GetAllVehicleMakesForDropdownAsync()
         {
             return await _makeRepository.GetAllAsync();
         }

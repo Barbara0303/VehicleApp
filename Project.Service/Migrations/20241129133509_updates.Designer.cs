@@ -11,8 +11,8 @@ using Project.Service.Data;
 namespace Project.Service.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241126190108_SeedData")]
-    partial class SeedData
+    [Migration("20241129133509_updates")]
+    partial class updates
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -62,6 +62,30 @@ namespace Project.Service.Migrations
                             Id = 3,
                             Abrv = "VW",
                             Name = "Volkswagen"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Abrv = "SKODA",
+                            Name = "Škoda"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Abrv = "AUDI",
+                            Name = "Audi"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Abrv = "RENAULT",
+                            Name = "Renault"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Abrv = "OPEL",
+                            Name = "Opel"
                         });
                 });
 
@@ -118,6 +142,20 @@ namespace Project.Service.Migrations
                             Abrv = "Tiguan",
                             MakeId = 3,
                             Name = "VW Tiguan"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Abrv = "Octavia",
+                            MakeId = 4,
+                            Name = "Škoda Octavia"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Abrv = "Clio",
+                            MakeId = 6,
+                            Name = "Renault Clio"
                         });
                 });
 
@@ -126,7 +164,7 @@ namespace Project.Service.Migrations
                     b.HasOne("Project.Service.Models.VehicleMake", "VehicleMake")
                         .WithMany("VehicleModels")
                         .HasForeignKey("MakeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("VehicleMake");

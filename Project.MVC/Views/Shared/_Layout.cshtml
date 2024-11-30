@@ -26,16 +26,16 @@
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" asp-area="" asp-controller="VehicleMake" asp-action="Index">List</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="VehicleMake" asp-action="Index">Add new</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="VehicleMake" asp-action="Add">Add new</a></li>
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Vehicle Makes
+                                Vehicle Models
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" asp-area="" asp-controller="VehicleModel" asp-action="Index">List</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="VehicleModel" asp-action="Index">Add new</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="VehicleModel" asp-action="Add">Add new</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -45,6 +45,20 @@
     </header>
     <div class="container-fluid p-0">
         <main role="main">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
             @RenderBody()
         </main>
     </div>

@@ -7,11 +7,11 @@ namespace Project.MVC.Models.ViewModels
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Name is required.")]
-        [StringLength(50, ErrorMessage = "Name cannot exceed 50 characters.")]
+        [StringLength(30, MinimumLength = 2, ErrorMessage = "Name must be betweem 2 and 30 characters.")]
         public string Name { get; set; }
 
         [Required(ErrorMessage = "Abbreviation is required.")]
-        [StringLength(10, ErrorMessage = "Abbreviation cannot exceed 10 characters.")]
+        [StringLength(10,MinimumLength = 2, ErrorMessage = "Abbreviation must be between 2 and 10 characters.")]
         public string Abrv { get; set; }
     }
 }

@@ -48,7 +48,7 @@ namespace Project.MVC.Controllers
         [HttpGet]
         public async Task<IActionResult> Add()
         {
-            var makes = await _vehicleService.GetAllMakesForDropdownAsync();
+            var makes = await _vehicleService.GetAllVehicleMakesForDropdownAsync();
 
             ViewBag.Makes = makes.Select(m => new SelectListItem
             {
@@ -60,21 +60,22 @@ namespace Project.MVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(VehicleModelViewModel viewModel)
         {
             if (!ModelState.IsValid)
             {
-                var makes = await _vehicleService.GetAllMakesForDropdownAsync();
+                var makes = await _vehicleService.GetAllVehicleMakesForDropdownAsync();
                 ViewBag.Makes = makes.Select(m => new SelectListItem
                 {
                     Value = m.Id.ToString(),
                     Text = m.Name
                 }).ToList();
-
+                TempData["ErrorMessage"] = "Invalid input. Please check your data.";
                 return View(viewModel);
             }
-
             var model = _mapper.Map<VehicleModel>(viewModel);
+            TempData["SuccessMessage"] = "Vehicle model added successfully!";
             await _vehicleService.AddVehicleModelAsync(model);
 
             return RedirectToAction(nameof(Index));
@@ -91,7 +92,7 @@ namespace Project.MVC.Controllers
 
             var viewModel = _mapper.Map<VehicleModelViewModel>(model);
 
-            var makes = await _vehicleService.GetAllMakesForDropdownAsync();
+            var makes = await _vehicleService.GetAllVehicleMakesForDropdownAsync();
             ViewBag.Makes = makes.Select(m => new SelectListItem
             {
                 Value = m.Id.ToString(),
@@ -107,13 +108,14 @@ namespace Project.MVC.Controllers
         {
             if (!ModelState.IsValid)
             {
-                var makes = await _vehicleService.GetAllMakesForDropdownAsync();
+                var makes = await _vehicleService.GetAllVehicleMakesForDropdownAsync();
                 ViewBag.Makes = makes.Select(m => new SelectListItem
                 {
                     Value = m.Id.ToString(),
                     Text = m.Name
                 }).ToList();
 
+                TempData["ErrorMessage"] = "Invalid input. Please check your data.";
                 return View(viewModel);
             }
 
@@ -124,7 +126,7 @@ namespace Project.MVC.Controllers
             {
                 return NotFound(); 
             }
-
+            TempData["SuccessMessage"] = "Vehicle model edited successfully!";
             return RedirectToAction(nameof(Index));
         }
 
@@ -137,7 +139,7 @@ namespace Project.MVC.Controllers
             {
                 return NotFound();
             }
-
+            TempData["SuccessMessage"] = "Vehicle model deleted successfully!";
             return RedirectToAction(nameof(Index));
         }
     }

@@ -3,25 +3,28 @@
 @{
     ViewData["Title"] = "Edit Vehicle Model";
 }
+<div class="container">
+<h1 class="mt-5">Edit Vehicle Model</h1>
 
-<h1>Edit Vehicle Model</h1>
-
+<div class="mt-5">
 <form method="post">
-    <input type="text" readonly asp-for="Id" />
-
-    <div class="form-group">
+    <div class="mb-4">
+            <label asp-for="Id" class="control-label"></label>
+                <input type="text" readonly class="form-control" asp-for="Id" />
+            </div>
+    <div class="mb-4">
         <label asp-for="Name" class="control-label"></label>
         <input asp-for="Name" class="form-control" />
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
+    <div class="mb-4">
         <label asp-for="Abrv" class="control-label"></label>
         <input asp-for="Abrv" class="form-control" />
         <span asp-validation-for="Abrv" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
+    <div class="mb-4">
         <label asp-for="MakeId" class="control-label">Vehicle Make</label>
         <select asp-for="MakeId" class="form-control" asp-items="ViewBag.Makes">
             <option value="">-- Select Make --</option>
@@ -29,13 +32,18 @@
         <span asp-validation-for="MakeId" class="text-danger"></span>
     </div>
 
+    <div class="d-flex justify-content-between">
     <div class="mb-3">
-        <button type="submit" class="btn btn-dark" asp-action="Edit">Save</button>
+        <button type="submit" class="btn btn-success" asp-action="Edit">Save</button>
     </div>
     <div class="mb-3">
-        <button type="submit" class="btn btn-outline-dark" asp-action="Delete">Delete</button>
+        <button type="submit" class="btn btn-outline-danger" asp-action="Delete">Delete</button>
     </div>
+            </div>
 </form>
+</div>
+</div>
+
 
 @section Scripts {
     @{

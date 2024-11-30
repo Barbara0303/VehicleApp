@@ -10,7 +10,9 @@ namespace Project.MVC.Mappings
             CreateMap<VehicleMake, VehicleMakeViewModel>().ReverseMap();
             CreateMap<VehicleModel, VehicleModelViewModel>()
             .ForMember(dest => dest.MakeName, opt => opt.MapFrom(src => src.VehicleMake.Name)).ReverseMap();
-   
+            CreateMap<VehicleModelViewModel, VehicleModel>()
+             .ForMember(dest => dest.VehicleMake, opt => opt.Ignore())
+             .ForMember(dest => dest.MakeId, opt => opt.MapFrom(src => src.MakeId));
         }
     }
 }

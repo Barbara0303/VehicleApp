@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Project.MVC.Models.ViewModels;
 using Project.Service;
 using Project.Service.Models;
@@ -19,7 +20,7 @@ namespace Project.MVC.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(string? searchQuery, string? sortBy, string? sortDirection, int pageSize = 5, int pageNumber = 1)
         {
-            var totalRecords = await _vehicleService.CountAsync();
+            var totalRecords = await _vehicleService.CountVehicleMakeAsync();
             var totalPages = Math.Ceiling((decimal)totalRecords / pageSize);
 
             if (pageNumber > totalPages)
@@ -38,7 +39,7 @@ namespace Project.MVC.Controllers
             ViewBag.TotalPages = totalPages;
             ViewBag.PageSize = pageSize;
             ViewBag.PageNumber = pageNumber;
-            var vehicleMakes = await _vehicleService.GetAllMakesAsync(searchQuery, sortBy, sortDirection, pageSize, pageNumber);
+            var vehicleMakes = await _vehicleService.GetAllVehicleMakesAsync(searchQuery, sortBy, sortDirection, pageSize, pageNumber);
             var viewModel = _mapper.Map<List<VehicleMakeViewModel>>(vehicleMakes);
             return View(viewModel);
         }
@@ -50,28 +51,28 @@ namespace Project.MVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(VehicleMakeViewModel viewModel)
         {
             if (!ModelState.IsValid)
             {
+                TempData["ErrorMessage"] = "Invalid input. Please check your data.";
                 return View(viewModel);
             }
-
-            var make = _mapper.Map<VehicleMake>(viewModel);
-            await _vehicleService.CreateMakeAsync(make);
-
-            return RedirectToAction(nameof(Index));
+                var make = _mapper.Map<VehicleMake>(viewModel);
+                await _vehicleService.CreateVehicleMakeAsync(make);
+                TempData["SuccessMessage"] = "Vehicle make added successfully!";
+                return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
 
-            var make = await _vehicleService.GetMakeByIdAsync(id);
+            var make = await _vehicleService.GetVehicleMakeByIdAsync(id);
             if (make != null)
             {
                 var viewModel = _mapper.Map<VehicleMakeViewModel>(make);
-
                 return View(viewModel);
             }
 
@@ -79,36 +80,53 @@ namespace Project.MVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(VehicleMakeViewModel viewModel)
         {
             if (!ModelState.IsValid)
             {
+                TempData["ErrorMessage"] = "Invalid input. Please check your data.";
                 return View(viewModel);
             }
 
             var make = _mapper.Map<VehicleMake>(viewModel);
-            var updatedMake = await _vehicleService.UpdateMakeAsync(make);
+            var updatedMake = await _vehicleService.UpdateVehicleMakeAsync(make);
 
             if (updatedMake == null)
             {
                 return NotFound();
             }
 
+            TempData["SuccessMessage"] = "Vehicle make updated successfully!";
             return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(VehicleMakeViewModel viewModel)
         {
 
-            var make = await _vehicleService.DeleteMakeAsync(viewModel.Id);
-
-            if (make != null)
+            try
             {
+                var make = await _vehicleService.DeleteVehicleMakeAsync(viewModel.Id);
+
+                if (make != null)
+                {
+                    TempData["SuccessMessage"] = "Vehicle make deleted successfully!";
+                    return RedirectToAction(nameof(Index));
+                }
+                return NotFound();
+            }
+            catch (DbUpdateException)
+            {
+                TempData["ErrorMessage"] = "Unable to delete this vehicle make because it has associated vehicle models.";
                 return RedirectToAction(nameof(Index));
             }
-
-            return NotFound();
+            catch (Exception)
+            {
+                TempData["ErrorMessage"] = "An unexpected error occurred. Please try again.";
+                return RedirectToAction(nameof(Index));
+            }
         }
     }
 }

@@ -3,37 +3,37 @@
 @{
     ViewData["Title"] = "Add Vehicle Model";
 }
+<div class="container">
+<h1 class="mt-5">Add Vehicle Model</h1>
 
-<h1>Add Vehicle Model</h1>
-
+<div class="mt-5">
 <form asp-action="Add" method="post">
-    <!-- Name input -->
-    <div class="form-group">
+    <div class="mb-4">
         <label asp-for="Name" class="control-label"></label>
         <input asp-for="Name" class="form-control" />
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
 
-    <!-- Abbreviation input -->
-    <div class="form-group">
+    <div class="mb-4">
         <label asp-for="Abrv" class="control-label"></label>
         <input asp-for="Abrv" class="form-control" />
         <span asp-validation-for="Abrv" class="text-danger"></span>
     </div>
 
-    <!-- Dropdown for MakeId -->
-    <div class="form-group">
+    <div class="mb-4">
         <label asp-for="MakeId" class="control-label">Vehicle Make</label>
         <select asp-for="MakeId" class="form-control" asp-items="ViewBag.Makes">
             <option value="">-- Select Make --</option>
         </select>
         <span asp-validation-for="MakeId" class="text-danger"></span>
     </div>
-
-    <!-- Submit and Cancel buttons -->
-    <button type="submit" class="btn btn-primary">Add Model</button>
+    <div class="d-flex justify-content-between">
+    <button type="submit" class="btn btn-success">Add Model</button>
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-</form>
+            </div>
+            </form>
+</div>
+</div>
 
 @section Scripts {
     @{

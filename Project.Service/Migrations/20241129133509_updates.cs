@@ -2,10 +2,12 @@
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Project.Service.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class updates : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -42,7 +44,34 @@ namespace Project.Service.Migrations
                         column: x => x.MakeId,
                         principalTable: "VehicleMakes",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.InsertData(
+                table: "VehicleMakes",
+                columns: new[] { "Id", "Abrv", "Name" },
+                values: new object[,]
+                {
+                    { 1, "BMW", "BMW" },
+                    { 2, "FORD", "Ford" },
+                    { 3, "VW", "Volkswagen" },
+                    { 4, "SKODA", "Škoda" },
+                    { 5, "AUDI", "Audi" },
+                    { 6, "RENAULT", "Renault" },
+                    { 7, "OPEL", "Opel" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "VehicleModels",
+                columns: new[] { "Id", "Abrv", "MakeId", "Name" },
+                values: new object[,]
+                {
+                    { 1, "128", 1, "BMW 128" },
+                    { 2, "325", 1, "BMW 325" },
+                    { 3, "Focus", 2, "Ford Focus" },
+                    { 4, "Tiguan", 3, "VW Tiguan" },
+                    { 5, "Octavia", 4, "Škoda Octavia" },
+                    { 6, "Clio", 6, "Renault Clio" }
                 });
 
             migrationBuilder.CreateIndex(
