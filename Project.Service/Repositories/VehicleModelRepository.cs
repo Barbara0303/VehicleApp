@@ -21,14 +21,25 @@ namespace Project.Service.Repositories
             return vehicleModel;
         }
 
-        public async Task<int> CountAsync()
+        public async Task<int> CountAsync(string? searchQuery, string? makeFilter)
         {
-            return await _appDbContext.VehicleModels.CountAsync();
+            var query = _appDbContext.VehicleModels.Include(x => x.VehicleMake).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(makeFilter))
+            {
+                query = query.Where(x => x.VehicleMake.Name.Contains(makeFilter));
+            }
+
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                query = query.Where(x => x.Name.Contains(searchQuery) || x.Abrv.Contains(searchQuery));
+            }
+            return await query.CountAsync();
         }
 
         public async Task<VehicleModel?> DeleteAsync(int id)
         {
-            var existing = await _appDbContext.VehicleModels.FirstOrDefaultAsync(m => m.Id == id);
+            var existing = await _appDbContext.VehicleModels.FirstOrDefaultAsync(x => x.Id == id);
             if (existing == null)
             {
                 return null;
@@ -81,12 +92,12 @@ namespace Project.Service.Repositories
 
         public async Task<VehicleModel?> GetByIdAsync(int id)
         {
-            return await _appDbContext.VehicleModels.FirstOrDefaultAsync(m => m.Id == id);
+            return await _appDbContext.VehicleModels.FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<VehicleModel?> UpdateAsync(VehicleModel vehicleModel)
         {
-            var existing = await _appDbContext.VehicleModels.FirstOrDefaultAsync(m => m.Id == vehicleModel.Id);
+            var existing = await _appDbContext.VehicleModels.FirstOrDefaultAsync(x => x.Id == vehicleModel.Id);
             if (existing == null)
             {
                 return null;

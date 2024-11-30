@@ -20,17 +20,17 @@ namespace Project.MVC.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(string? searchQuery, string? sortBy, string? sortDirection, string? makeFilter, int pageSize = 5, int pageNumber = 1)
         {
-            var totalRecords = await _vehicleService.GetVehicleModelCountAsync();
+            var totalRecords = await _vehicleService.GetVehicleModelCountAsync(searchQuery, makeFilter);
             var totalPages = Math.Ceiling((decimal)totalRecords / pageSize);
 
             if (pageNumber > totalPages)
             {
-                pageNumber--;
+                pageNumber = (int)totalPages;
             }
 
             if (pageNumber < 1)
             {
-                pageNumber++;
+                pageNumber = 1;
             }
 
             ViewBag.SearchQuery = searchQuery;
@@ -40,6 +40,8 @@ namespace Project.MVC.Controllers
             ViewBag.TotalPages = totalPages;
             ViewBag.PageSize = pageSize;
             ViewBag.PageNumber = pageNumber;
+            ViewBag.HasPreviousPage = pageNumber > 1;
+            ViewBag.HasNextPage = pageNumber < totalPages;
             var vehicleModels = await _vehicleService.GetAllVehicleModelsAsync(searchQuery, sortBy, sortDirection, makeFilter, pageSize, pageNumber);
             var viewModel = _mapper.Map<List<VehicleModelViewModel>>(vehicleModels);
             return View(viewModel);

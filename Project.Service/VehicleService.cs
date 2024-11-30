@@ -19,9 +19,9 @@ namespace Project.Service
             return await _makeRepository.GetAllAsync(searchQuery, sortBy, sortDirection, pageSize, pageNumber);
         }
 
-        public async Task<int> CountVehicleMakeAsync()
+        public async Task<int> CountVehicleMakeAsync(string? searchQuery)
         {
-            return await _makeRepository.CountAsync();
+            return await _makeRepository.CountAsync(searchQuery);
         }
 
         public async Task<VehicleMake?> GetVehicleMakeByIdAsync(int id)
@@ -68,14 +68,14 @@ namespace Project.Service
             return await _modelRepository.DeleteAsync(id);
         }
 
-        public async Task<int> GetVehicleModelCountAsync()
+        public async Task<int> GetVehicleModelCountAsync(string? searchQuery, string? makeFilter)
         {
-            return await _modelRepository.CountAsync();
+            return await _modelRepository.CountAsync(searchQuery, makeFilter);
         }
 
         public async Task<IEnumerable<VehicleMake>> GetAllVehicleMakesForDropdownAsync()
         {
-            return await _makeRepository.GetAllAsync();
+            return await _makeRepository.GetAllAsync(null, null, null);
         }
     }
 }

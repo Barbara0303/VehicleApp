@@ -30,9 +30,15 @@ namespace Project.Service.Repositories
             return null;
         }
 
-        public async Task<int> CountAsync()
+        public async Task<int> CountAsync(string? searchQuery)
         {
-            return await _appDbContext.VehicleMakes.CountAsync();
+            var query = _appDbContext.VehicleMakes.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                query = query.Where(x => x.Name.Contains(searchQuery) || x.Abrv.Contains(searchQuery));
+            }
+            return await query.CountAsync();
         }
 
         public async Task<IEnumerable<VehicleMake>> GetAllAsync(string? searchQuery, string? sortBy, string? sortDirection,

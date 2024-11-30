@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<Project.MVC.Models.ViewModels.VehicleMakeViewModel>
 @{
     ViewData["Title"] = "Vehicle Makes";
-    int nextPage = Convert.ToInt32(ViewBag.PageNumber) + 1;
-    int previousPage = Convert.ToInt32(ViewBag.PageNumber) - 1;
+    var nextPage = Convert.ToInt32(@ViewBag.PageNumber + 1);
+    var previousPage = Convert.ToInt32(@ViewBag.PageNumber - 1);
 }
-<div class="container mt-5">
+    <div class="container mt-5">
     <h1>List of Vehicle Makes</h1>
 </div>
 
@@ -83,12 +83,28 @@
 
 <nav aria-label="Page navigation">
         <ul class="pagination justify-content-end">
-        <li class="page-item"><a class="page-link" asp-action="Index" asp-route-pageNumber="@previousPage" asp-route-pageSize=@ViewBag.PageSize asp-route-sortBy="@ViewBag.SortBy" asp-route-sortDirection="@ViewBag.SortDirection">Previous</a></li>
-        @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            @if (ViewBag.HasPreviousPage) {
+            <li class="page-item"><a class="page-link" asp-action="Index" asp-route-pageNumber=@previousPage asp-route-pageSize=@ViewBag.PageSize asp-route-sortBy="@ViewBag.SortBy" asp-route-sortDirection="@ViewBag.SortDirection">Previous</a></li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">Previous</span>
+                </li>
+            }
+            @for (int i = 1; i <= ViewBag.TotalPages; i++)
         {
             <li class="page-item"><a class="page-link" asp-action="Index" asp-route-pageNumber="@i" asp-route-pageSize=@ViewBag.PageSize asp-route-sortBy="@ViewBag.SortBy" asp-route-sortDirection="@ViewBag.SortDirection">@i</a></li>
         }
-        <li class="page-item"><a class="page-link" asp-action="Index" asp-route-pageNumber="@nextPage" asp-route-pageSize=@ViewBag.PageSize asp-route-sortBy="@ViewBag.SortBy" asp-route-sortDirection="@ViewBag.SortDirection">Next</a></li>
-    </ul>
+            @if (ViewBag.HasNextPage) {
+            <li class="page-item"><a class="page-link" asp-action="Index" asp-route-pageNumber=@nextPage asp-route-pageSize=@ViewBag.PageSize asp-route-sortBy="@ViewBag.SortBy" asp-route-sortDirection="@ViewBag.SortDirection">Next</a></li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">Next</span>
+                </li>
+            }
+        </ul>
 </nav>
 </div>
