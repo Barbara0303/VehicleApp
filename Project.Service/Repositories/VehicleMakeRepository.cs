@@ -81,9 +81,14 @@ namespace Project.Service.Repositories
 
         public async Task<VehicleMake?> UpdateAsync(VehicleMake vehicleMake)
         {
-            _appDbContext.VehicleMakes.Update(vehicleMake);
+            var existing = await _appDbContext.VehicleMakes.FirstOrDefaultAsync(x => x.Id == vehicleMake.Id);
+            if (existing == null)
+            {
+                return null;
+            }
+            _appDbContext.Entry(existing).CurrentValues.SetValues(vehicleMake);
             await _appDbContext.SaveChangesAsync();
-            return vehicleMake;
+            return existing;
         }
 
         public async Task<IEnumerable<VehicleMake>> GetAllForDropdownAsync()
