@@ -1,22 +1,29 @@
-﻿using Project.Service.Models;
+﻿using Project.Service.Parameters;
+using Project.Service.Models;
 
 namespace Project.Service
 {
     public interface IVehicleService
     {
-        Task<IEnumerable<VehicleMake>> GetAllVehicleMakesAsync(string? searchQuery, string? sortBy, string? sortDirection, int pageSize = 0, int pageNumber = 0);
+        Task<IEnumerable<VehicleMake>> GetAllVehicleMakesAsync(
+            FilteringParameters filteringParams,
+            SortingParameters sortingParams,
+            PagingParameters pagingParams);
         Task<VehicleMake?> GetVehicleMakeByIdAsync(int id);
         Task<VehicleMake> CreateVehicleMakeAsync(VehicleMake make);
-        Task<VehicleMake?> UpdateVehicleMakeAsync(VehicleMake make);
-        Task<VehicleMake?> DeleteVehicleMakeAsync(int id);
-        Task<int> CountVehicleMakeAsync(string? searchQuery);
+        Task<bool> UpdateVehicleMakeAsync(VehicleMake make);
+        Task<bool> DeleteVehicleMakeAsync(int id);
+        Task<int> CountVehicleMakeAsync(FilteringParameters filteringParams);
         Task<IEnumerable<VehicleMake>> GetAllVehicleMakesForDropdownAsync();
 
-        Task<IEnumerable<VehicleModel>> GetAllVehicleModelsAsync(string? searchQuery, string? sortBy, string? sortDirection, string? makeFilter, int pageSize = 0, int pageNumber = 0);
+        Task<IEnumerable<VehicleModel>> GetAllVehicleModelsAsync(
+            FilteringParameters filteringParams,
+            SortingParameters sortingParams,
+            PagingParameters pagingParams);
         Task<VehicleModel?> GetVehicleModelByIdAsync(int id);
         Task<VehicleModel> AddVehicleModelAsync(VehicleModel vehicleModel);
-        Task<VehicleModel?> UpdateVehicleModelAsync(VehicleModel vehicleModel);
-        Task<VehicleModel?> DeleteVehicleModelAsync(int id);
-        Task<int> GetVehicleModelCountAsync(string? searchQuery, string? makeFilter);
+        Task<bool> UpdateVehicleModelAsync(VehicleModel vehicleModel);
+        Task<bool> DeleteVehicleModelAsync(int id);
+        Task<int> GetVehicleModelCountAsync(FilteringParameters filteringParams);
     }
 }

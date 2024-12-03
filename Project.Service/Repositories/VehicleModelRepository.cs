@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Project.Service.Parameters;
 using Project.Service.Data;
 using Project.Service.Models;
 using System;
@@ -21,18 +22,18 @@ namespace Project.Service.Repositories
             return vehicleModel;
         }
 
-        public async Task<int> CountAsync(string? searchQuery, string? makeFilter)
+        public async Task<int> CountAsync(FilteringParameters filteringParams)
         {
             var query = _appDbContext.VehicleModels.Include(x => x.VehicleMake).AsQueryable();
 
-            if (!string.IsNullOrWhiteSpace(makeFilter))
+            if (!string.IsNullOrWhiteSpace(filteringParams.FilterQuery))
             {
-                query = query.Where(x => x.VehicleMake.Name.Contains(makeFilter));
+                query = query.Where(x => x.VehicleMake.Name.Contains(filteringParams.FilterQuery));
             }
 
-            if (!string.IsNullOrEmpty(searchQuery))
+            if (!string.IsNullOrEmpty(filteringParams.SearchQuery))
             {
-                query = query.Where(x => x.Name.Contains(searchQuery) || x.Abrv.Contains(searchQuery));
+                query = query.Where(x => x.Name.Contains(filteringParams.SearchQuery) || x.Abrv.Contains(filteringParams.SearchQuery));
             }
             return await query.CountAsync();
         }
@@ -50,42 +51,44 @@ namespace Project.Service.Repositories
             return existing;
         }
 
-        public async Task<IEnumerable<VehicleModel>> GetAllAsync(string? searchQuery = null, string? sortBy = null, string? sortDirection = null, string? makeFilter = null, int pageSize = 0, int pageNumber = 0)
+        public async Task<IEnumerable<VehicleModel>> GetAllAsync(
+            FilteringParameters filteringParams,
+            SortingParameters sortingParams,
+            PagingParameters pagingParams)
         {
             var query = _appDbContext.VehicleModels.Include(x => x.VehicleMake).AsQueryable();
 
-            if (!string.IsNullOrWhiteSpace(makeFilter))
+            if (!string.IsNullOrWhiteSpace(filteringParams.FilterQuery))
             {
-                query = query.Where(x => x.VehicleMake.Name.Contains(makeFilter));
+                query = query.Where(x => x.VehicleMake.Name.Contains(filteringParams.FilterQuery));
             }
 
-            if (string.IsNullOrWhiteSpace(searchQuery) == false)
+            if (string.IsNullOrWhiteSpace(filteringParams.SearchQuery) == false)
             {
-                query = query.Where(x => x.Name.Contains(searchQuery) || x.Abrv.Contains(searchQuery)
-                || x.VehicleMake.Name.Contains(searchQuery));
+                query = query.Where(x => x.Name.Contains(filteringParams.SearchQuery) || x.Abrv.Contains(filteringParams.SearchQuery)
+                || x.VehicleMake.Name.Contains(filteringParams.SearchQuery));
             }
 
-            if (string.IsNullOrWhiteSpace(sortBy) == false)
+            if (string.IsNullOrWhiteSpace(sortingParams.SortBy) == false)
             {
-                var isDesc = string.Equals(sortDirection, "Desc", StringComparison.OrdinalIgnoreCase);
+                var isDesc = string.Equals(sortingParams.SortDirection, "Desc", StringComparison.OrdinalIgnoreCase);
 
-                if (string.Equals(sortBy, "Name", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(sortingParams.SortBy, "Name", StringComparison.OrdinalIgnoreCase))
                 {
                     query = isDesc ? query.OrderByDescending(x => x.Name) : query.OrderBy(x => x.Name);
                 }
 
-                if (string.Equals(sortBy, "Abrv", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(sortingParams.SortBy, "Abrv", StringComparison.OrdinalIgnoreCase))
                 {
                     query = isDesc ? query.OrderByDescending(x => x.Abrv) : query.OrderBy(x => x.Abrv);
                 }
 
             }
 
-            if (pageSize > 0 && pageNumber > 0)
-            {
-                var skipResults = (pageNumber - 1) * pageSize;
-                query = query.Skip(skipResults).Take(pageSize);
-            }
+ 
+                var skipResults = (pagingParams.PageNumber - 1) * pagingParams.PageSize;
+                query = query.Skip(skipResults).Take(pagingParams.PageSize);
+ 
 
             return await query.ToListAsync();
         }

@@ -1,8 +1,8 @@
 ﻿@model IEnumerable<Project.MVC.Models.ViewModels.VehicleModelViewModel>
 @{
     ViewData["Title"] = "Vehicle Models";
-    var nextPage = Convert.ToInt32(@ViewBag.PageNumber + 1);
-    var previousPage = Convert.ToInt32(@ViewBag.PageNumber - 1);
+    var nextPage = Convert.ToInt32(@ViewBag.Paging.PageNumber + 1);
+    var previousPage = Convert.ToInt32(@ViewBag.Paging.PageNumber - 1);
 }
 
 <div class="container mt-5">
@@ -14,9 +14,9 @@
         <div class="container mt-5">
             <div class="row">
                 <div class="col col-md-6 d-flex p-0"> 
-                    <input type="text" class="form-control border-bottom border-0 shadow-none" name="searchQuery" value="@ViewBag.SearchQuery"
+                    <input type="text" class="form-control border-bottom border-0 shadow-none" name="searchQuery" value="@ViewBag.Filtering.SearchQuery"
                     placeholder="Search by Name, Abbreviation or Make" />
-                    <input type="hidden" name="makeFilter" value="@ViewBag.MakeFilter" />
+                    <input type="hidden" name="filterQuery" value="@ViewBag.Filtering.FilterQuery" />
                     <button type="submit" class="btn btn-primary ms-3">Search</button>
                 </div>
             </div>
@@ -32,12 +32,12 @@
                 <th>Name
                     <span>
                         <span>
-                            <a class="btn btn-light" asp-action="Index" asp-route-sortBy="Name" asp-route-sortDirection="Asc" asp-route-searchQuery="@ViewBag.SearchQuery" asp-route-makeFilter="@ViewBag.MakeFilter">
+                            <a class="btn btn-light" asp-action="Index" asp-route-sortBy="Name" asp-route-sortDirection="Asc" asp-route-searchQuery="@ViewBag.Filtering.SearchQuery" asp-route-filterQuery="@ViewBag.Filtering.FilterQuery">
                                 <i class="bi bi-arrow-up"></i>
                             </a>
                         </span>
                         <span>
-                            <a class="btn btn-light" asp-action="Index" asp-route-sortBy="Name" asp-route-sortDirection="Desc" asp-route-searchQuery="@ViewBag.SearchQuery" asp-route-makeFilter="@ViewBag.MakeFilter">
+                            <a class="btn btn-light" asp-action="Index" asp-route-sortBy="Name" asp-route-sortDirection="Desc" asp-route-searchQuery="@ViewBag.Filtering.SearchQuery" asp-route-filterQuery="@ViewBag.Filtering.FilterQuery">
                                 <i class="bi bi-arrow-down"></i>
                             </a>
                         </span>
@@ -46,12 +46,12 @@
                 <th>Abbreviation
                     <span>
                         <span>
-                            <a class="btn btn-light" asp-action="Index" asp-route-sortBy="Abrv" asp-route-sortDirection="Asc" asp-route-searchQuery="@ViewBag.SearchQuery" asp-route-makeFilter="@ViewBag.MakeFilter">
+                            <a class="btn btn-light" asp-action="Index" asp-route-sortBy="Abrv" asp-route-sortDirection="Asc" asp-route-searchQuery="@ViewBag.Filtering.SearchQuery" asp-route-makeFilter="@ViewBag.Filtering.FilterQuery">
                                 <i class="bi bi-arrow-up"></i>
                             </a>
                         </span>
                         <span>
-                            <a class="btn btn-light" asp-action="Index" asp-route-sortBy="Abrv" asp-route-sortDirection="Desc" asp-route-searchQuery="@ViewBag.SearchQuery" asp-route-makeFilter="@ViewBag.MakeFilter">
+                            <a class="btn btn-light" asp-action="Index" asp-route-sortBy="Abrv" asp-route-sortDirection="Desc" asp-route-searchQuery="@ViewBag.Filtering.SearchQuery" asp-route-makeFilter="@ViewBag.Filtering.FilterQuery">
                                 <i class="bi bi-arrow-down"></i>
                             </a>
                         </span>
@@ -62,11 +62,10 @@
                         <span class="me-2">Make</span>
                         <form method="get" asp-action="Index">
                             <div class="input-group input-group-sm">
-                                <input type="hidden" name="searchTerm" value="@ViewBag.SearchTerm" />
-                                <input type="hidden" name="sortColumn" value="@ViewBag.SortColumn" />
-                                <input type="hidden" name="sortDirection" value="@ViewBag.SortDirection" />
-                                <input type="hidden" name="page" value="@ViewBag.Page" />
-                                <input type="text" name="makeFilter" value="@ViewBag.MakeFilter" class="form-control shadow-none rounded" placeholder="Filter by Make Name"  />
+                                <input type="hidden" name="searchQuery" value="@ViewBag.Filtering.SearchQuery" />
+                                <input type="hidden" name="sortBy" value="@ViewBag.Sorting.SortBy" />
+                                <input type="hidden" name="sortDirection" value="@ViewBag.Sorting.SortDirection" />
+                                <input type="text" name="filterQuery" value="@ViewBag.Filtering.FilterQuery" class="form-control shadow-none rounded" placeholder="Filter by Make Name"  />
                                 <button type="submit" class="btn btn-dark">Filter</button>
                             </div>
                         </form>
@@ -87,8 +86,11 @@
                     <td>@vehicleModel.Abrv</td>
                     <td>@vehicleModel.MakeName</td>
                     <td>@vehicleModel.MakeId</td>
-                    <td>
+                    <td class="d-flex justify-content-evenly">
                         <a class="btn btn-warning" asp-action="Edit" asp-route-id="@vehicleModel.Id">Edit</a>
+                        <form method="post">
+                            <button class="btn btn-danger" asp-action="Delete" asp-route-id="@vehicleModel.Id">Delete</button>
+                        </form>
                     </td>
                 </tr>
             }
@@ -99,7 +101,7 @@
         <ul class="pagination justify-content-end">
             @if (ViewBag.HasPreviousPage)
             {
-                <li class="page-item"><a class="page-link" asp-action="Index" asp-route-pageNumber=@previousPage asp-route-pageSize=@ViewBag.PageSize asp-route-sortBy="@ViewBag.SortBy" asp-route-sortDirection="@ViewBag.SortDirection">Previous</a></li>
+                <li class="page-item"><a class="page-link" asp-action="Index" asp-route-pageNumber=@previousPage asp-route-pageSize=@ViewBag.Paging.PageSize asp-route-sortBy="@ViewBag.Sorting.SortBy" asp-route-sortDirection="@ViewBag.Sorting.SortDirection">Previous</a></li>
             }
             else
             {
@@ -109,10 +111,10 @@
             }
             @for (int i = 1; i <= ViewBag.TotalPages; i++)
         {
-            <li class="page-item"><a class="page-link" asp-action="Index" asp-route-pageNumber="@i" asp-route-pageSize=@ViewBag.PageSize asp-route-sortBy="@ViewBag.SortBy" asp-route-sortDirection="@ViewBag.SortDirection">@i</a></li>
+                <li class="page-item"><a class="page-link" asp-action="Index" asp-route-pageNumber="@i" asp-route-pageSize=@ViewBag.Paging.PageSize asp-route-sortBy="@ViewBag.Sorting.SortBy" asp-route-sortDirection="@ViewBag.Sorting.SortDirection">@i</a></li>
         }
             @if (ViewBag.HasNextPage) {
-            <li class="page-item"><a class="page-link" asp-action="Index" asp-route-pageNumber=@nextPage asp-route-pageSize=@ViewBag.PageSize asp-route-sortBy="@ViewBag.SortBy" asp-route-sortDirection="@ViewBag.SortDirection">Next</a></li>
+                <li class="page-item"><a class="page-link" asp-action="Index" asp-route-pageNumber=@nextPage asp-route-pageSize=@ViewBag.Paging.PageSize asp-route-sortBy="@ViewBag.Sorting.SortBy" asp-route-sortDirection="@ViewBag.Sorting.SortDirection">Next</a></li>
             }
             else
             {

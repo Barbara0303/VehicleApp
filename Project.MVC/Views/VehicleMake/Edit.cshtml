@@ -25,13 +25,12 @@
     <div>
         <button type="submit" class="btn btn-success"  asp-action="Edit">Save</button>
     </div>
-    <div class="">
-        <button type="submit" class="btn btn-outline-danger" asp-action="Delete">Delete</button>
-    </div>
+                <a class="btn btn-outline-dark" asp-action="Index">Cancel</a>
+
             </div>
-</form>
-</div>
-</div>
+
+        </form>
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");

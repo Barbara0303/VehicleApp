@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Project.MVC.Models.ViewModels;
 using Project.Service;
+using Project.Service.Parameters;
 using Project.Service.Models;
 
 namespace Project.MVC.Controllers
@@ -18,32 +19,33 @@ namespace Project.MVC.Controllers
             _mapper = mapper;
         }
         [HttpGet]
-        public async Task<IActionResult> Index(string? searchQuery, string? sortBy, string? sortDirection, string? makeFilter, int pageSize = 5, int pageNumber = 1)
+        public async Task<IActionResult> Index(
+            [FromQuery] FilteringParameters filteringParams,
+            [FromQuery] SortingParameters sortingParams,
+            [FromQuery] PagingParameters pagingParams)
         {
-            var totalRecords = await _vehicleService.GetVehicleModelCountAsync(searchQuery, makeFilter);
-            var totalPages = Math.Ceiling((decimal)totalRecords / pageSize);
+            var totalRecords = await _vehicleService.GetVehicleModelCountAsync(filteringParams);
+            var totalPages = Math.Ceiling((decimal)totalRecords / pagingParams.PageSize);
 
-            if (pageNumber > totalPages)
+            if (pagingParams.PageNumber > totalPages)
             {
-                pageNumber = (int)totalPages;
+                pagingParams.PageNumber = (int)totalPages;
             }
 
-            if (pageNumber < 1)
+            if (pagingParams.PageNumber < 1)
             {
-                pageNumber = 1;
+                pagingParams.PageNumber = 1;
             }
 
-            ViewBag.SearchQuery = searchQuery;
-            ViewBag.MakeFilter = makeFilter;
-            ViewBag.SortBy = sortBy;
-            ViewBag.SortDirection = sortDirection;
-            ViewBag.TotalPages = totalPages;
-            ViewBag.PageSize = pageSize;
-            ViewBag.PageNumber = pageNumber;
-            ViewBag.HasPreviousPage = pageNumber > 1;
-            ViewBag.HasNextPage = pageNumber < totalPages;
-            var vehicleModels = await _vehicleService.GetAllVehicleModelsAsync(searchQuery, sortBy, sortDirection, makeFilter, pageSize, pageNumber);
+            var vehicleModels = await _vehicleService.GetAllVehicleModelsAsync(filteringParams, sortingParams, pagingParams);
             var viewModel = _mapper.Map<List<VehicleModelViewModel>>(vehicleModels);
+            ViewBag.Filtering = filteringParams;
+            ViewBag.Sorting = sortingParams;
+            ViewBag.Paging = pagingParams;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.HasPreviousPage = pagingParams.PageNumber > 1;
+            ViewBag.HasNextPage = pagingParams.PageNumber < totalPages;
+
             return View(viewModel);
         }
 
@@ -124,7 +126,7 @@ namespace Project.MVC.Controllers
             var model = _mapper.Map<VehicleModel>(viewModel);
             var result = await _vehicleService.UpdateVehicleModelAsync(model);
 
-            if (result == null)
+            if (!result)
             {
                 return NotFound(); 
             }
@@ -134,10 +136,10 @@ namespace Project.MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(VehicleModelViewModel viewModel)
+        public async Task<IActionResult> Delete(int id)
         {
-            var result = await _vehicleService.DeleteVehicleModelAsync(viewModel.Id);
-            if (result == null)
+            var result = await _vehicleService.DeleteVehicleModelAsync(id);
+            if (!result)
             {
                 return NotFound();
             }

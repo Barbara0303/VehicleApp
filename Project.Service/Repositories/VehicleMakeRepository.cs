@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Project.Service.Parameters;
 using Project.Service.Data;
 using Project.Service.Models;
+
 
 namespace Project.Service.Repositories
 {
@@ -30,48 +32,44 @@ namespace Project.Service.Repositories
             return null;
         }
 
-        public async Task<int> CountAsync(string? searchQuery)
+        public async Task<int> CountAsync(FilteringParameters filteringParams)
         {
             var query = _appDbContext.VehicleMakes.AsQueryable();
 
-            if (!string.IsNullOrEmpty(searchQuery))
+            if (!string.IsNullOrEmpty(filteringParams.SearchQuery))
             {
-                query = query.Where(x => x.Name.Contains(searchQuery) || x.Abrv.Contains(searchQuery));
+                query = query.Where(x => x.Name.Contains(filteringParams.SearchQuery) || x.Abrv.Contains(filteringParams.SearchQuery));
             }
             return await query.CountAsync();
         }
 
-        public async Task<IEnumerable<VehicleMake>> GetAllAsync(string? searchQuery, string? sortBy, string? sortDirection,
-             int pageSize = 0, int pageNumber = 0)
+        public async Task<IEnumerable<VehicleMake>> GetAllAsync(FilteringParameters filteringParams,
+            SortingParameters sortingParams,
+            PagingParameters pagingParams)
         {
             var query = _appDbContext.VehicleMakes.AsQueryable();
 
-            if (string.IsNullOrWhiteSpace(searchQuery) == false)
+            if (string.IsNullOrWhiteSpace(filteringParams.SearchQuery) == false)
             {
-                query = query.Where(x => x.Name.Contains(searchQuery) || x.Abrv.Contains(searchQuery));
+                query = query.Where(x => x.Name.Contains(filteringParams.SearchQuery) || x.Abrv.Contains(filteringParams.SearchQuery));
             }
 
-            if (string.IsNullOrWhiteSpace(sortBy) == false)
+            if (string.IsNullOrWhiteSpace(sortingParams.SortBy) == false)
             {
-                var isDesc = string.Equals(sortDirection, "Desc", StringComparison.OrdinalIgnoreCase);
-
-                if (string.Equals(sortBy, "Name", StringComparison.OrdinalIgnoreCase))
+                var isDesc = string.Equals(sortingParams.SortDirection, "Desc", StringComparison.OrdinalIgnoreCase);
+                if (string.Equals(sortingParams.SortBy, "Name", StringComparison.OrdinalIgnoreCase))
                 {
                     query = isDesc ? query.OrderByDescending(x => x.Name) : query.OrderBy(x => x.Name);
                 }
 
-                if (string.Equals(sortBy, "Abrv", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(sortingParams.SortBy, "Abrv", StringComparison.OrdinalIgnoreCase))
                 {
                     query = isDesc ? query.OrderByDescending(x => x.Abrv) : query.OrderBy(x => x.Abrv);
                 }
-
             }
 
-            if (pageSize > 0 && pageNumber > 0)
-            {
-                var skipResults = (pageNumber - 1) * pageSize;
-                query = query.Skip(skipResults).Take(pageSize);
-            }
+                var skipResults = (pagingParams.PageNumber - 1) * pagingParams.PageSize;
+                query = query.Skip(skipResults).Take(pagingParams.PageSize);
 
             return await query.ToListAsync();
         }
@@ -86,6 +84,11 @@ namespace Project.Service.Repositories
             _appDbContext.VehicleMakes.Update(vehicleMake);
             await _appDbContext.SaveChangesAsync();
             return vehicleMake;
+        }
+
+        public async Task<IEnumerable<VehicleMake>> GetAllForDropdownAsync()
+        {
+            return await _appDbContext.VehicleMakes.ToListAsync();
         }
     }
 }

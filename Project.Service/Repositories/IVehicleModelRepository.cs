@@ -1,14 +1,18 @@
-﻿using Project.Service.Models;
+﻿using Project.Service.Parameters;
+using Project.Service.Models;
 
 namespace Project.Service.Repositories
 {
     public interface IVehicleModelRepository
     {
-        Task<IEnumerable<VehicleModel>> GetAllAsync(string? searchQuery, string? sortBy, string? sortDirection, string? makeFilter, int pageSize = 0, int pageNumber = 0);
+        Task<IEnumerable<VehicleModel>> GetAllAsync(
+            FilteringParameters filteringParams,
+            SortingParameters sortingParams,
+            PagingParameters pagingParams);
         Task<VehicleModel?> GetByIdAsync(int id);
         Task<VehicleModel> AddAsync(VehicleModel vehicleModel);
         Task<VehicleModel?> UpdateAsync(VehicleModel vehicleModel);
         Task<VehicleModel?> DeleteAsync(int id);
-        Task<int> CountAsync(string? searchQuery, string? makeFilter);
+        Task<int> CountAsync(FilteringParameters filteringParams);
     }
 }
